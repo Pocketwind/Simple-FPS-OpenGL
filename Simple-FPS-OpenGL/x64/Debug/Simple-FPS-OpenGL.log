@@ -6,9 +6,9 @@ D:\git\Simple-FPS-OpenGL\inc\ShaderReader.h(18,20): warning C4267: '=': 'size_t'
   (소스 파일 'main.cpp'을(를) 컴파일하는 중)
   
 D:\git\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(21,27): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
-D:\git\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(139,15): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
-D:\git\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(249,29): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\git\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(250,29): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\git\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(252,24): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
-D:\git\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(254,25): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
+D:\git\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(163,15): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
+D:\git\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(273,29): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\git\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(274,29): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\git\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(276,24): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
+D:\git\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(278,25): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
   Simple-FPS-OpenGL.vcxproj -> D:\git\Simple-FPS-OpenGL\x64\Debug\Simple-FPS-OpenGL.exe

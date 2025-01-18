@@ -12,13 +12,13 @@ using namespace glm;
 
 const char* TITLE = "Simple FPS OpenGL";
 const int TARGET_FPS = 60;
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
+const int SCREEN_WIDTH = 1600;
+const int SCREEN_HEIGHT = 900;
 const int INITIAL_X = -5;
 const int INITIAL_Y = 10;
 const int INITIAL_Z = 5;
 const int ARM_DISTANCE = 3;
-const float MOUSE_SPEED = 0.01;
+const float MOUSE_SPEED = 0.001;
 
 
 const char* vs = R"(
@@ -114,6 +114,30 @@ void main()
                                 light.position,fragpos,normal,viewpos,
                                 ambientStrength,specularStrength,shininess,diffuseStrength);
     fragmentColorOut = vec4(color, 1.0);
+}
+)";
+
+const char* vs_base = R"(
+#version 330 core
+layout (location = 0) in vec3 vertexPosition; 
+layout (location = 1) in vec3 vertexColor; 
+out vec3 fragmentColor;
+uniform mat4 Amat; 
+void main()
+{
+    vec4 point = vec4(vertexPosition, 1.0);
+    gl_Position = Amat * point;
+    fragmentColor = vertexColor;
+}
+)";
+
+const char* fs_base = R"(
+#version 330 core
+in vec3 fragmentColor;
+out vec4 fragmentColorOut;
+void main()
+{
+   fragmentColorOut = vec4(fragmentColor, 1.0); // alpha
 }
 )";
 
@@ -282,12 +306,23 @@ int main()
 		return -1;
 	}
 
-	//object 로드
-	GLuint base = InitializeBase();
-	//shader 로드
+	//object shader 로드
 	//const char* vs = textFileRead("vertex.vs");
 	//const char* fs = textFileRead("fragment.fs");
-	GLuint shader = CreateShader(vs, fs);
+	GLuint shader_object = CreateShader(vs, fs);
+	GLuint MmatLoc = glGetUniformLocation(shader_object, "Mmat");
+	GLuint camVecLoc = glGetUniformLocation(shader_object, "camVec");
+	GLuint vertexColorLoc = glGetUniformLocation(shader_object, "vertexColor");
+	GLuint ambientStrengthLoc = glGetUniformLocation(shader_object, "ambientStrength_in");
+	GLuint specularStrengthLoc = glGetUniformLocation(shader_object, "specularStrength_in");
+	GLuint shininessLoc = glGetUniformLocation(shader_object, "shininess_in");
+	GLuint diffuseStrengthLoc = glGetUniformLocation(shader_object, "diffuseStrength_in");
+
+	//base shader 로드
+	GLuint base = InitializeBase();
+	GLuint shader = CreateShader(vs_base, fs_base);
+	GLuint AmatLoc = glGetUniformLocation(shader, "Amat");
+
 	//free(vs);
 	//free(fs);
 
@@ -332,7 +367,7 @@ int main()
 		//Base 그리기
 		glUseProgram(shader);
 		glBindVertexArray(base);
-		glUniformMatrix4fv(glGetUniformLocation(shader, "MVP"), 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &MVP[0][0]);
 		glDrawArrays(GL_LINES, 0, 6);
 
 		glCullFace(GL_BACK);
