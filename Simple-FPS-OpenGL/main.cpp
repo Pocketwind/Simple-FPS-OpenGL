@@ -6,21 +6,26 @@
 #include <ShaderReader.h>
 #include <vector>
 #include <math.h>
+#include <thread>
+#include <chrono>
 
 using namespace std;
 using namespace glm;
 
+//기본 설정값들
 const char* TITLE = "Simple FPS OpenGL";
-const int TARGET_FPS = 60;
+const int TARGET_FPS = 30;
 const int SCREEN_WIDTH = 1600;
 const int SCREEN_HEIGHT = 900;
 const int INITIAL_X = -5;
 const int INITIAL_Y = 10;
 const int INITIAL_Z = 5;
 const int ARM_DISTANCE = 3;
+const float MOVE = 0.01;
+const float SLIDE = 0.3;
 const float MOUSE_SPEED = 0.001;
 
-
+//GLSL
 const char* vs = R"(
 #version 330 core
 layout (location = 0) in vec3 vertexPosition; 
@@ -141,6 +146,7 @@ void main()
 }
 )";
 
+//데이터 구조체
 struct Model
 {
 	vector<float> trivertex;
@@ -169,15 +175,9 @@ struct Cam
 	vec3 up = vec3(0, 1, 0);
 	vec3 pos = vec3(INITIAL_X, INITIAL_Y, INITIAL_Z);
 	vec3 target = vec3(0, 0, 0);
+	vec3 inertia = vec3(0, 0, 0);
 };
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) 
-{
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) 
-	{
-		glfwSetWindowShouldClose(window, GLFW_TRUE);
-	}
-}
 
 GLuint InitializeBase()
 {
@@ -277,6 +277,40 @@ void CursorCallback(GLFWwindow* window, double xpos, double ypos)
 	if (cam1.angle2 < -3.1415 / 2)
 		cam1.angle2 = -3.1415 / 2;
 }
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	{
+		glfwSetWindowShouldClose(window, GLFW_TRUE);
+	}
+}
+void InputControl(GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		cam1.inertia += cam1.viewVector * MOVE;
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		cam1.inertia -= cam1.viewVector * MOVE;
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		cam1.inertia -= normalize(cross(cam1.viewVector, cam1.up)) * MOVE;
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		cam1.inertia += normalize(cross(cam1.viewVector, cam1.up)) * MOVE;
+	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+	{
+		cam1.inertia.y -= 0.1;
+	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	{
+		cam1.inertia.y += 0.1;
+	}
+}
 
 int main() 
 {
@@ -299,6 +333,8 @@ int main()
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, CursorCallback);
+	//Vsync
+	glfwSwapInterval(1);
 	GLenum err = glewInit();
 	if (err != GLEW_OK)
 	{
@@ -336,20 +372,41 @@ int main()
 	cam1.pos = vec3(INITIAL_X, INITIAL_Y, INITIAL_Z);
 	cam1.target = vec3(0, 0, 0);
 
-
+	double lastTime = 0;
 	while (!glfwWindowShouldClose(window))
 	{
-		double timePerFrame = glfwGetTime();
+		double currentTime = glfwGetTime();
+		double delta = currentTime - lastTime;
+
+		//Input
+		InputControl(window);
+
+		//렌더링 시작
+		double frameStart = glfwGetTime();
+		//버퍼
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
+
 		//커서 중앙으로 고정
 		glfwSetCursorPos(window, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+
 		//캠1 update
 		cam1.viewVector = vec3(
 			cos(cam1.angle1) * cos(cam1.angle2),
 			sin(cam1.angle2),
 			sin(cam1.angle1) * cos(cam1.angle2)
 		);
+		//pos update
+		cam1.pos = cam1.pos + cam1.inertia * vec3(delta);
+		//inertia update
+		cam1.inertia *= SLIDE;
+		if (cam1.inertia.x < 0.0001 && cam1.inertia.x > -0.0001)
+			cam1.inertia.x = 0;
+		if (cam1.inertia.y < 0.0001 && cam1.inertia.y > -0.0001)
+			cam1.inertia.y = 0;
+		if (cam1.inertia.z < 0.0001 && cam1.inertia.z > -0.0001)
+			cam1.inertia.z = 0;
+		
 		//target update
 		cam1.target = cam1.pos + cam1.viewVector;
 		//armpos update
@@ -370,12 +427,16 @@ int main()
 		glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &MVP[0][0]);
 		glDrawArrays(GL_LINES, 0, 6);
 
+		//버퍼
 		glCullFace(GL_BACK);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
-		double timeElapsed = glfwGetTime() - timePerFrame;
-		cout << "FPS: " << 1 / timeElapsed << endl;
+		double frameEnd = glfwGetTime();
+		double frameDelta = frameEnd - frameStart;
+
+		cout << "FPS: " << 1/frameDelta << endl;
+		cout << "Pos: " << cam1.pos.x << " " << cam1.pos.y << " " << cam1.pos.z << endl;
 	}
 
 	glfwTerminate();
