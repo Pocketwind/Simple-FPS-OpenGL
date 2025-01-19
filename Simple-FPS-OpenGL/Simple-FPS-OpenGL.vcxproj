@@ -130,7 +130,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GLSL.cpp" />
+    <ClCompile Include="LoadOBJ.h" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Objects.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DataStruct.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
