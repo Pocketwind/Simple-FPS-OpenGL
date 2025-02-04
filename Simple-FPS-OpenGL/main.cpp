@@ -15,8 +15,8 @@ using namespace glm;
 //기본 설정값들
 const char* TITLE = "Simple FPS OpenGL";
 const int TARGET_FPS = 30;
-const int SCREEN_WIDTH = 1600;
-const int SCREEN_HEIGHT = 900;
+const int SCREEN_WIDTH = 2560;
+const int SCREEN_HEIGHT = 1440;
 const int INITIAL_X = -5;
 const int INITIAL_Y = 10;
 const int INITIAL_Z = 5;
@@ -38,12 +38,16 @@ GLuint CreateShader(const char*, const char*);
 void CursorCallback(GLFWwindow*, double, double);
 void key_callback(GLFWwindow*, int, int, int, int);
 void InputControl(GLFWwindow*);
+void DrawObject(GLuint shader, GLuint sphere, OBJ& obj_sphere, mat4& M, mat4& MVP, 
+	GLuint MmatLoc, GLuint AmatLoc, GLuint camVecLoc, GLuint vertexColorLoc, 
+	GLuint ambientStrengthLoc, GLuint specularStrengthLoc, GLuint shininessLoc, 
+	GLuint diffuseStrengthLoc, GLuint lightColorLoc, GLuint lightPositionLoc);
 
 //전역	변수
 //Cam1 초기화 
 Cam cam1;
 
-int main() 
+int main()
 {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -54,7 +58,7 @@ int main()
 		return -1;
 	}
 	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE, NULL, NULL);
-	if (!window) 
+	if (!window)
 	{
 		cerr << "Failed to create window" << endl;
 		glfwTerminate();
@@ -93,6 +97,8 @@ int main()
 	GLuint specularStrengthLoc = glGetUniformLocation(shader, "specularStrength_in");
 	GLuint shininessLoc = glGetUniformLocation(shader, "shininess_in");
 	GLuint diffuseStrengthLoc = glGetUniformLocation(shader, "diffuseStrength_in");
+	GLuint lightColorLoc = glGetUniformLocation(shader, "lightColor_in");
+	GLuint lightPositionLoc = glGetUniformLocation(shader, "lightPosition_in");
 
 	//base shader 로드
 	GLuint base = InitializeBase();
@@ -154,7 +160,7 @@ int main()
 			cam1.inertia.y = 0;
 		if (cam1.inertia.z < SLIDE_THRESHOLD && cam1.inertia.z > -SLIDE_THRESHOLD)
 			cam1.inertia.z = 0;
-		
+
 		//target update
 		cam1.target = cam1.pos + cam1.viewVector;
 		//armpos update
@@ -175,44 +181,23 @@ int main()
 		glUniformMatrix4fv(AmatLoc_base, 1, GL_FALSE, &MVP[0][0]);
 		glDrawArrays(GL_LINES, 0, 6);
 
-		//Object 그리기
+		float radius = 5;
+		vec3 lightPos = vec3(sin(glfwGetTime()) * radius, 3, cos(glfwGetTime()) * radius);
+
 		glUseProgram(shader);
-		glBindVertexArray(cube);
-		glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &M[0][0]);
-		glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &MVP[0][0]);
-		glUniform3fv(camVecLoc, 1, &cam1.pos[0]);
-		glUniform3fv(vertexColorLoc, 1, &vec3(1,1,0)[0]);
-		glUniform1f(ambientStrengthLoc, 0.1);
-		glUniform1f(specularStrengthLoc, 0.5);
-		glUniform1f(shininessLoc, 32);
-		glUniform1f(diffuseStrengthLoc, 0.5);
-		glDrawArrays(GL_TRIANGLES, 0, obj_cube.polygons*3);
-		
-		/*
 		glBindVertexArray(sphere);
 		glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &M[0][0]);
 		glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &MVP[0][0]);
 		glUniform3fv(camVecLoc, 1, &cam1.pos[0]);
 		glUniform3fv(vertexColorLoc, 1, &vec3(1, 1, 1)[0]);
+		glUniform3fv(lightColorLoc, 1, &vec3(1.0, 1.0, 1.0)[0]);
+		glUniform3fv(lightPositionLoc, 1, &lightPos[0]);
 		glUniform1f(ambientStrengthLoc, 0.1);
 		glUniform1f(specularStrengthLoc, 0.5);
 		glUniform1f(shininessLoc, 32);
 		glUniform1f(diffuseStrengthLoc, 0.5);
-		glDrawArrays(GL_TRIANGLES, 0, obj_sphere.polygons);
-		*/
-
-		/*
-		glBindVertexArray(paimon);
-		glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &M[0][0]);
-		glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &MVP[0][0]);
-		glUniform3fv(camVecLoc, 1, &cam1.pos[0]);
-		glUniform3fv(vertexColorLoc, 1, &vec3(1, 1, 1)[0]);
-		glUniform1f(ambientStrengthLoc, 0.1);
-		glUniform1f(specularStrengthLoc, 0.5);
-		glUniform1f(shininessLoc, 32);
-		glUniform1f(diffuseStrengthLoc, 0.5);
-		glDrawArrays(GL_TRIANGLES, 0, obj_paimon.polygons);
-		*/
+		glDrawArrays(GL_TRIANGLES, 0, obj_sphere.polygons * 3);
+		
 
 
 
@@ -224,7 +209,7 @@ int main()
 		double frameEnd = glfwGetTime();
 		double frameDelta = frameEnd - frameStart;
 
-		cout << "FPS: " << 1/delta << endl;
+		cout << "FPS: " << 1 / delta << endl;
 		//cout << "Pos: " << cam1.pos.x << " " << cam1.pos.y << " " << cam1.pos.z << endl;
 	}
 
@@ -274,7 +259,7 @@ GLuint InitializeBase()
 }
 
 
-GLuint InitializeObject(OBJ &model)
+GLuint InitializeObject(OBJ& model)
 {
 	//VAO
 	GLuint vao;
@@ -287,12 +272,12 @@ GLuint InitializeObject(OBJ &model)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 	glBufferData(GL_ARRAY_BUFFER, model.trivertex.size() * sizeof(vec3), &model.trivertex[0], GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, model.trinormal.size() * sizeof(vec3), &model.trinormal[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, model.trinormal.size() * sizeof(vec3), &model.trinormal_coords[0][0], GL_STATIC_DRAW);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(vec3), 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), 0);
 
 	return vao;
 }
@@ -361,4 +346,26 @@ void InputControl(GLFWwindow* window)
 	{
 		cam1.inertia.y += 0.1;
 	}
+}
+
+void DrawObject(GLuint shader, GLuint sphere, OBJ& obj, mat4& M, mat4& MVP,
+	vec3& camPos, vec3& vertexColor, vec3& lightColor, vec3& lightPosition,
+	float ambientStrength, float specularStrength, float shininess, float diffuseStrength,
+	GLuint MmatLoc, GLuint AmatLoc, GLuint camVecLoc, GLuint vertexColorLoc,
+	GLuint ambientStrengthLoc, GLuint specularStrengthLoc, GLuint shininessLoc,
+	GLuint diffuseStrengthLoc, GLuint lightColorLoc, GLuint lightPositionLoc)
+{
+	glUseProgram(shader);
+	glBindVertexArray(sphere);
+	glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &M[0][0]);
+	glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &MVP[0][0]);
+	glUniform3fv(camVecLoc, 1, &cam1.pos[0]);
+	glUniform3fv(vertexColorLoc, 1, &vertexColor[0]);
+	glUniform3fv(lightColorLoc, 1, &lightColor[0]);
+	glUniform3fv(lightPositionLoc, 1, &lightPosition[0]);
+	glUniform1f(ambientStrengthLoc, ambientStrength);
+	glUniform1f(specularStrengthLoc, specularStrength);
+	glUniform1f(shininessLoc, shininess);
+	glUniform1f(diffuseStrengthLoc, diffuseStrength);
+	glDrawArrays(GL_TRIANGLES, 0, obj.polygons * 3);
 }

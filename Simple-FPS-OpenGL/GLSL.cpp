@@ -7,6 +7,8 @@ out vec3 fragmentColor;
 out vec3 viewpos;
 out vec3 fragpos;
 out vec3 normal;
+out vec3 lightColor;
+out vec3 lightPosition;
 out float ambientStrength;
 out float specularStrength;
 out float shininess;
@@ -16,6 +18,8 @@ uniform mat4 Amat;
 uniform mat4 Mmat; 
 uniform vec3 camVec;
 uniform vec3 vertexColor;
+uniform vec3 lightColor_in;
+uniform vec3 lightPosition_in;
 uniform float ambientStrength_in;
 uniform float specularStrength_in;
 uniform float shininess_in;
@@ -38,9 +42,10 @@ void main()
     specularStrength = specularStrength_in;
     shininess = shininess_in;
     diffuseStrength = diffuseStrength_in;
+    lightColor = lightColor_in;
+    lightPosition = lightPosition_in;
     
     fragmentColor = material_color;
-
 }
 )";
 extern const char* fs = R"(
@@ -49,6 +54,8 @@ in vec3 viewpos;
 in vec3 fragpos;
 in vec3 normal;
 in vec3 fragmentColor;
+in vec3 lightColor;
+in vec3 lightPosition;
 in float ambientStrength;
 in float specularStrength;
 in float shininess;
@@ -86,11 +93,10 @@ vec3 LightingModel(vec3 material_color, vec3 lightColor,
 
 void main()
 {
-    phLight light;
-    light=phLight(vec3(1,1,1),vec3(10,10,10));
-    vec3 color = LightingModel(fragmentColor,light.color,
-                                light.position,fragpos,normal,viewpos,
+    vec3 color = LightingModel(fragmentColor,lightColor,
+                                lightPosition,fragpos,normal,viewpos,
                                 ambientStrength,specularStrength,shininess,diffuseStrength);
+    
     fragmentColorOut = vec4(color, 1.0);
 }
 )";
