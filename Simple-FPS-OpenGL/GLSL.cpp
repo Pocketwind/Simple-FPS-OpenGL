@@ -87,7 +87,7 @@ vec3 LightingModel(vec3 material_color, vec3 lightColor,
 void main()
 {
     phLight light;
-    light=phLight(vec3(1,1,1),vec3(0,20,0));
+    light=phLight(vec3(1,1,1),vec3(10,10,10));
     vec3 color = LightingModel(fragmentColor,light.color,
                                 light.position,fragpos,normal,viewpos,
                                 ambientStrength,specularStrength,shininess,diffuseStrength);

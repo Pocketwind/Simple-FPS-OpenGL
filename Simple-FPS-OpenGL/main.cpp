@@ -21,7 +21,7 @@ const int INITIAL_X = -5;
 const int INITIAL_Y = 10;
 const int INITIAL_Z = 5;
 const int ARM_DISTANCE = 3;
-const float MOVE = 0.01;
+const float MOVE = 3;
 const float SLIDE = 0.8;
 const float MOUSE_SPEED = 0.001;
 const float SLIDE_THRESHOLD = 0.001;
@@ -78,6 +78,7 @@ int main()
 	OBJ obj_cube = OBJ("cube.obj", false);
 	OBJ obj_sphere = OBJ("sphere.obj", false);
 	OBJ obj_paimon = OBJ("paimon.obj", false);
+
 	GLuint cube = InitializeObject(obj_cube);
 	GLuint sphere = InitializeObject(obj_sphere);
 	GLuint paimon = InitializeObject(obj_paimon);
@@ -117,10 +118,12 @@ int main()
 
 
 	double lastTime = 0;
+	double currentTime = glfwGetTime();
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	while (!glfwWindowShouldClose(window))
 	{
-		double currentTime = glfwGetTime();
+		lastTime = currentTime;
+		currentTime = glfwGetTime();
 		double delta = currentTime - lastTime;
 
 		//Input
@@ -178,14 +181,14 @@ int main()
 		glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &M[0][0]);
 		glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &MVP[0][0]);
 		glUniform3fv(camVecLoc, 1, &cam1.pos[0]);
-		glUniform3fv(vertexColorLoc, 1, &vec3(1, 1, 1)[0]);
+		glUniform3fv(vertexColorLoc, 1, &vec3(1,1,0)[0]);
 		glUniform1f(ambientStrengthLoc, 0.1);
 		glUniform1f(specularStrengthLoc, 0.5);
 		glUniform1f(shininessLoc, 32);
 		glUniform1f(diffuseStrengthLoc, 0.5);
-		glDrawArrays(GL_TRIANGLES, 0, obj_cube.polygons);
+		glDrawArrays(GL_TRIANGLES, 0, obj_cube.polygons*3);
 		
-		
+		/*
 		glBindVertexArray(sphere);
 		glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &M[0][0]);
 		glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &MVP[0][0]);
@@ -196,6 +199,7 @@ int main()
 		glUniform1f(shininessLoc, 32);
 		glUniform1f(diffuseStrengthLoc, 0.5);
 		glDrawArrays(GL_TRIANGLES, 0, obj_sphere.polygons);
+		*/
 
 		/*
 		glBindVertexArray(paimon);
@@ -221,7 +225,7 @@ int main()
 		double frameDelta = frameEnd - frameStart;
 
 		cout << "FPS: " << 1/delta << endl;
-		cout << "Pos: " << cam1.pos.x << " " << cam1.pos.y << " " << cam1.pos.z << endl;
+		//cout << "Pos: " << cam1.pos.x << " " << cam1.pos.y << " " << cam1.pos.z << endl;
 	}
 
 	glfwTerminate();
@@ -281,14 +285,14 @@ GLuint InitializeObject(OBJ &model)
 	glGenBuffers(2, vbo);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, model.trivertex.size() * sizeof(float), &model.trivertex[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, model.trivertex.size() * sizeof(vec3), &model.trivertex[0], GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, model.trinormal.size() * sizeof(float), &model.trinormal[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, model.trinormal.size() * sizeof(vec3), &model.trinormal[0], GL_STATIC_DRAW);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(vec3), 0);
 
 	return vao;
 }
