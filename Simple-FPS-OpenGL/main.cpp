@@ -8,6 +8,7 @@
 #include <math.h>
 #include "DataStruct.h"
 #include "LoadOBJ.h"
+#include "Geometric.h"
 
 using namespace std;
 using namespace glm;
@@ -126,6 +127,20 @@ int main()
 	double lastTime = 0;
 	double currentTime = glfwGetTime();
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	//Geo 정보
+	Geo* geo_sphere1 = new Geo();
+	geo_sphere1->SetColor(vec3(1, 1, 1));
+	geo_sphere1->SetLocalM(translate(mat4(1), vec3(0,5,0)));
+	geo_sphere1->SetLocalG(scale(mat4(1),vec3(1,1,1)));
+
+	Geo* geo_sphere2 = new Geo(geo_sphere1);
+	geo_sphere2->SetColor(vec3(1, 0, 0));
+	geo_sphere2->SetLocalM(translate(mat4(1), vec3(0, 5, 0)));
+	geo_sphere2->SetLocalG(scale(mat4(1), vec3(2,2,2)));
+
+	geo_sphere1->SetGlobalM();
+
 	while (!glfwWindowShouldClose(window))
 	{
 		lastTime = currentTime;
@@ -175,6 +190,13 @@ int main()
 		//MVP Matrix
 		mat4 MVP = P * V * M;
 
+		//Geo 업데이트
+		float sinTime = sin(glfwGetTime());
+		float cosTime = cos(glfwGetTime());
+		geo_sphere1->SetLocalG(scale(mat4(1), vec3(abs(sinTime * 2), abs(sinTime * 2), abs(sinTime * 2))));
+		geo_sphere1->SetGlobalM();
+		//geo_sphere2->SetGlobalM();
+
 		//Base 그리기
 		glUseProgram(shader_base);
 		glBindVertexArray(base);
@@ -182,15 +204,18 @@ int main()
 		glDrawArrays(GL_LINES, 0, 6);
 
 		float radius = 5;
-		vec3 lightPos = vec3(sin(glfwGetTime()) * radius, 3, cos(glfwGetTime()) * radius);
+		vec3 lightPos = vec3(sinTime * radius, 3, cosTime * radius);
 
+
+		//Sphere
+		mat4 Amat = P * V * geo_sphere1->GetModelMatrix();
 		glUseProgram(shader);
 		glBindVertexArray(sphere);
-		glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &M[0][0]);
-		glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &(geo_sphere1->GetModelMatrix())[0][0]);
+		glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &Amat[0][0]);
 		glUniform3fv(camVecLoc, 1, &cam1.pos[0]);
-		glUniform3fv(vertexColorLoc, 1, &vec3(1, 1, 1)[0]);
-		glUniform3fv(lightColorLoc, 1, &vec3(1.0, 1.0, 1.0)[0]);
+		glUniform3fv(vertexColorLoc, 1, &(geo_sphere1->GetColor())[0]);
+		glUniform3fv(lightColorLoc, 1, &vec3(1, 1, 1)[0]);
 		glUniform3fv(lightPositionLoc, 1, &lightPos[0]);
 		glUniform1f(ambientStrengthLoc, 0.1);
 		glUniform1f(specularStrengthLoc, 0.5);
@@ -198,8 +223,20 @@ int main()
 		glUniform1f(diffuseStrengthLoc, 0.5);
 		glDrawArrays(GL_TRIANGLES, 0, obj_sphere.polygons * 3);
 		
-
-
+		Amat = P * V * geo_sphere2->GetModelMatrix();
+		glUseProgram(shader);
+		glBindVertexArray(sphere);
+		glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &(geo_sphere2->GetModelMatrix())[0][0]);
+		glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &Amat[0][0]);
+		glUniform3fv(camVecLoc, 1, &cam1.pos[0]);
+		glUniform3fv(vertexColorLoc, 1, &(geo_sphere2->GetColor())[0]);
+		glUniform3fv(lightColorLoc, 1, &vec3(1, 1, 1)[0]);
+		glUniform3fv(lightPositionLoc, 1, &lightPos[0]);
+		glUniform1f(ambientStrengthLoc, 0.1);
+		glUniform1f(specularStrengthLoc, 0.5);
+		glUniform1f(shininessLoc, 32);
+		glUniform1f(diffuseStrengthLoc, 0.5);
+		glDrawArrays(GL_TRIANGLES, 0, obj_sphere.polygons * 3);
 
 		//버퍼
 		glCullFace(GL_BACK);
@@ -209,12 +246,12 @@ int main()
 		double frameEnd = glfwGetTime();
 		double frameDelta = frameEnd - frameStart;
 
-		cout << "FPS: " << 1 / delta << endl;
+		std::cout << "FPS: " << 1 / delta << endl;
 		//cout << "Pos: " << cam1.pos.x << " " << cam1.pos.y << " " << cam1.pos.z << endl;
 	}
 
 	glfwTerminate();
-	cout << "Window Closed" << endl;
+	std::cout << "Window Closed" << endl;
 	return 0;
 }
 

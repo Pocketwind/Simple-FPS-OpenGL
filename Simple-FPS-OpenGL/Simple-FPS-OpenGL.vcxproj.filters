@@ -21,15 +21,15 @@
     <ClCompile Include="GLSL.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Objects.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="LoadOBJ.h">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataStruct.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometric.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
   </ItemGroup>
