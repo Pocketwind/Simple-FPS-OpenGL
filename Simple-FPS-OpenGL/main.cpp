@@ -15,9 +15,9 @@ using namespace glm;
 
 //기본 설정값들
 const char* TITLE = "Simple FPS OpenGL";
-const int TARGET_FPS = 30;
-const int SCREEN_WIDTH = 2560;
-const int SCREEN_HEIGHT = 1440;
+const int TARGET_FPS = 60;
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
 const int INITIAL_X = -5;
 const int INITIAL_Y = 10;
 const int INITIAL_Z = 5;
@@ -43,6 +43,8 @@ void DrawObject(GLuint shader, GLuint sphere, OBJ& obj_sphere, mat4& M, mat4& MV
 	GLuint MmatLoc, GLuint AmatLoc, GLuint camVecLoc, GLuint vertexColorLoc, 
 	GLuint ambientStrengthLoc, GLuint specularStrengthLoc, GLuint shininessLoc, 
 	GLuint diffuseStrengthLoc, GLuint lightColorLoc, GLuint lightPositionLoc);
+void DrawObject(GLuint shader, GLuint sphere, OBJ& obj, mat4& M, mat4& MVP, ShaderLoc& loc);
+int CheckRayCollision(vec3 rayPos, vec3 rayVec, int* objs, int radius);
 
 //전역	변수
 //Cam1 초기화 
@@ -89,6 +91,7 @@ int main()
 	GLuint paimon = InitializeObject(obj_paimon);
 	//const char* vs = textFileRead("vertex.vs");
 	//const char* fs = textFileRead("fragment.fs");
+	ShaderLoc shaderLoc;
 	GLuint shader = CreateShader(vs, fs);
 	GLuint MmatLoc = glGetUniformLocation(shader, "Mmat");
 	GLuint AmatLoc = glGetUniformLocation(shader, "Amat");
@@ -100,6 +103,18 @@ int main()
 	GLuint diffuseStrengthLoc = glGetUniformLocation(shader, "diffuseStrength_in");
 	GLuint lightColorLoc = glGetUniformLocation(shader, "lightColor_in");
 	GLuint lightPositionLoc = glGetUniformLocation(shader, "lightPosition_in");
+	shaderLoc.MmatLoc = MmatLoc;
+	shaderLoc.AmatLoc = AmatLoc;
+	shaderLoc.camVecLoc = camVecLoc;
+	shaderLoc.vertexColorLoc = vertexColorLoc;
+	shaderLoc.ambientStrengthLoc = ambientStrengthLoc;
+	shaderLoc.specularStrengthLoc = specularStrengthLoc;
+	shaderLoc.shininessLoc = shininessLoc;
+	shaderLoc.diffuseStrengthLoc = diffuseStrengthLoc;
+	shaderLoc.lightColorLoc = lightColorLoc;
+	shaderLoc.lightPositionLoc = lightPositionLoc;
+
+
 
 	//base shader 로드
 	GLuint base = InitializeBase();
@@ -129,17 +144,12 @@ int main()
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	//Geo 정보
-	Geo* geo_sphere1 = new Geo();
-	geo_sphere1->SetColor(vec3(1, 1, 1));
-	geo_sphere1->SetLocalM(translate(mat4(1), vec3(0,5,0)));
-	geo_sphere1->SetLocalG(scale(mat4(1),vec3(1,1,1)));
+	Geo* geo_floor = new Geo();
+	geo_floor->SetColor(vec3(1, 1, 1));
+	geo_floor->SetLocalM(translate(mat4(1), vec3(0, -0.1, 0)));
+	geo_floor->SetLocalG(scale(mat4(1), vec3(100, 0.1, 100)));
 
-	Geo* geo_sphere2 = new Geo(geo_sphere1);
-	geo_sphere2->SetColor(vec3(1, 0, 0));
-	geo_sphere2->SetLocalM(translate(mat4(1), vec3(0, 5, 0)));
-	geo_sphere2->SetLocalG(scale(mat4(1), vec3(2,2,2)));
-
-	geo_sphere1->SetGlobalM();
+	geo_floor->SetGlobalM();
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -190,12 +200,9 @@ int main()
 		//MVP Matrix
 		mat4 MVP = P * V * M;
 
-		//Geo 업데이트
+		//Triangular
 		float sinTime = sin(glfwGetTime());
 		float cosTime = cos(glfwGetTime());
-		geo_sphere1->SetLocalG(scale(mat4(1), vec3(abs(sinTime * 2), abs(sinTime * 2), abs(sinTime * 2))));
-		geo_sphere1->SetGlobalM();
-		//geo_sphere2->SetGlobalM();
 
 		//Base 그리기
 		glUseProgram(shader_base);
@@ -203,40 +210,25 @@ int main()
 		glUniformMatrix4fv(AmatLoc_base, 1, GL_FALSE, &MVP[0][0]);
 		glDrawArrays(GL_LINES, 0, 6);
 
-		float radius = 5;
+		float radius = 30;
 		vec3 lightPos = vec3(sinTime * radius, 3, cosTime * radius);
 
-
-		//Sphere
-		mat4 Amat = P * V * geo_sphere1->GetModelMatrix();
+		mat4 Amat;
+		//Floor
+		Amat = P * V * geo_floor->GetModelMatrix();
 		glUseProgram(shader);
-		glBindVertexArray(sphere);
-		glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &(geo_sphere1->GetModelMatrix())[0][0]);
+		glBindVertexArray(cube);
+		glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &(geo_floor->GetModelMatrix())[0][0]);
 		glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &Amat[0][0]);
 		glUniform3fv(camVecLoc, 1, &cam1.pos[0]);
-		glUniform3fv(vertexColorLoc, 1, &(geo_sphere1->GetColor())[0]);
+		glUniform3fv(vertexColorLoc, 1, &(geo_floor->GetColor())[0]);
 		glUniform3fv(lightColorLoc, 1, &vec3(1, 1, 1)[0]);
 		glUniform3fv(lightPositionLoc, 1, &lightPos[0]);
 		glUniform1f(ambientStrengthLoc, 0.1);
 		glUniform1f(specularStrengthLoc, 0.5);
 		glUniform1f(shininessLoc, 32);
 		glUniform1f(diffuseStrengthLoc, 0.5);
-		glDrawArrays(GL_TRIANGLES, 0, obj_sphere.polygons * 3);
-		
-		Amat = P * V * geo_sphere2->GetModelMatrix();
-		glUseProgram(shader);
-		glBindVertexArray(sphere);
-		glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &(geo_sphere2->GetModelMatrix())[0][0]);
-		glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &Amat[0][0]);
-		glUniform3fv(camVecLoc, 1, &cam1.pos[0]);
-		glUniform3fv(vertexColorLoc, 1, &(geo_sphere2->GetColor())[0]);
-		glUniform3fv(lightColorLoc, 1, &vec3(1, 1, 1)[0]);
-		glUniform3fv(lightPositionLoc, 1, &lightPos[0]);
-		glUniform1f(ambientStrengthLoc, 0.1);
-		glUniform1f(specularStrengthLoc, 0.5);
-		glUniform1f(shininessLoc, 32);
-		glUniform1f(diffuseStrengthLoc, 0.5);
-		glDrawArrays(GL_TRIANGLES, 0, obj_sphere.polygons * 3);
+		glDrawArrays(GL_TRIANGLES, 0, obj_cube.polygons * 3);
 
 		//버퍼
 		glCullFace(GL_BACK);
@@ -405,4 +397,27 @@ void DrawObject(GLuint shader, GLuint sphere, OBJ& obj, mat4& M, mat4& MVP,
 	glUniform1f(shininessLoc, shininess);
 	glUniform1f(diffuseStrengthLoc, diffuseStrength);
 	glDrawArrays(GL_TRIANGLES, 0, obj.polygons * 3);
+}
+/*
+void DrawObject(GLuint shader, GLuint sphere, OBJ& obj, mat4& M, mat4& MVP, ShaderLoc& loc)
+{
+	glUseProgram(shader);
+	glBindVertexArray(sphere);
+	glUniformMatrix4fv(loc.MmatLoc, 1, GL_FALSE, &M[0][0]);
+	glUniformMatrix4fv(loc.AmatLoc, 1, GL_FALSE, &MVP[0][0]);
+	glUniform3fv(loc.camVecLoc, 1, &cam1.pos[0]);
+	glUniform3fv(loc.vertexColorLoc, 1, &obj.GetColor()[0]);
+	glUniform3fv(loc.lightColorLoc, 1, &vec3(1, 1, 1)[0]);
+	glUniform3fv(loc.lightPositionLoc, 1, &vec3(0, 5, 0)[0]);
+	glUniform1f(loc.ambientStrengthLoc, 0.1);
+	glUniform1f(loc.specularStrengthLoc, 0.5);
+	glUniform1f(loc.shininessLoc, 32);
+	glUniform1f(loc.diffuseStrengthLoc, 0.5);
+	glDrawArrays(GL_TRIANGLES, 0, obj.polygons * 3);
+}
+*/
+
+int CheckRayCollision(vec3 rayPos, vec3 rayVec, int* objs, int radius)
+{
+
 }

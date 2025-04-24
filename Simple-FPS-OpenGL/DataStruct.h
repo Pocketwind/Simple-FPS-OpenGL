@@ -31,3 +31,17 @@ struct Cam
 	vec3 target = vec3(0, 0, 0);
 	vec3 inertia = vec3(0, 0, 0);
 };
+
+struct ShaderLoc
+{
+	GLuint MmatLoc;
+	GLuint AmatLoc;
+	GLuint camVecLoc;
+	GLuint vertexColorLoc;
+	GLuint ambientStrengthLoc;
+	GLuint specularStrengthLoc;
+	GLuint shininessLoc;
+	GLuint diffuseStrengthLoc;
+	GLuint lightColorLoc;
+	GLuint lightPositionLoc;
+};
