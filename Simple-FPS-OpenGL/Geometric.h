@@ -67,4 +67,8 @@ public:
 	{
 		return globalM * localG;
 	}
+	vec3 GetPos()
+	{
+		return pos;
+	}
 };

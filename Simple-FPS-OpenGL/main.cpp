@@ -44,7 +44,7 @@ void DrawObject(GLuint shader, GLuint sphere, OBJ& obj_sphere, mat4& M, mat4& MV
 	GLuint ambientStrengthLoc, GLuint specularStrengthLoc, GLuint shininessLoc, 
 	GLuint diffuseStrengthLoc, GLuint lightColorLoc, GLuint lightPositionLoc);
 void DrawObject(GLuint shader, GLuint sphere, OBJ& obj, mat4& M, mat4& MVP, ShaderLoc& loc);
-int CheckRayCollision(vec3 rayPos, vec3 rayVec, int* objs, int radius);
+bool CheckObjectCollision(vec3 rayPos, vec3 rayVec, Geo* objPos, int radius);
 
 //전역	변수
 //Cam1 초기화 
@@ -238,8 +238,9 @@ int main()
 		double frameEnd = glfwGetTime();
 		double frameDelta = frameEnd - frameStart;
 
-		std::cout << "FPS: " << 1 / delta << endl;
+		//std::cout << "FPS: " << 1 / delta << endl;
 		//cout << "Pos: " << cam1.pos.x << " " << cam1.pos.y << " " << cam1.pos.z << endl;
+		cout << CheckObjectCollision(cam1.pos, cam1.viewVector, geo_floor, 1) << endl;
 	}
 
 	glfwTerminate();
@@ -417,7 +418,13 @@ void DrawObject(GLuint shader, GLuint sphere, OBJ& obj, mat4& M, mat4& MVP, Shad
 }
 */
 
-int CheckRayCollision(vec3 rayPos, vec3 rayVec, int* objs, int radius)
+bool CheckObjectCollision(vec3 rayPos, vec3 rayVec, Geo* objPos, int radius)
 {
-
+	vec3 pos = rayPos - objPos->GetPos();
+	//int D = (powf(dot(rayVec, objPos->GetPos()), 2) - (dot(rayVec, rayVec) * (dot(pos, pos) - powf(radius, 2))));
+	int D= pow(dot(rayVec, pos), 2) - dot(rayVec, rayVec) * (dot(pos, pos) - radius * radius);
+	if (D < 0)
+		return false;
+	else
+		return true;
 }
