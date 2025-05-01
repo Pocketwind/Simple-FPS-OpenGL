@@ -44,7 +44,7 @@ void DrawObject(GLuint shader, GLuint sphere, OBJ& obj_sphere, mat4& M, mat4& MV
 	GLuint ambientStrengthLoc, GLuint specularStrengthLoc, GLuint shininessLoc, 
 	GLuint diffuseStrengthLoc, GLuint lightColorLoc, GLuint lightPositionLoc);
 void DrawObject(GLuint shader, GLuint sphere, OBJ& obj, mat4& M, mat4& MVP, ShaderLoc& loc);
-bool CheckObjectCollision(vec3 rayPos, vec3 rayVec, Geo* objPos, int radius);
+bool CheckObjectCollision(vec3 rayPos, vec3 rayVec, vec3 objPos, int radius);
 
 //전역	변수
 //Cam1 초기화 
@@ -144,12 +144,25 @@ int main()
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	//Geo 정보
+	//floor
 	Geo* geo_floor = new Geo();
 	geo_floor->SetColor(vec3(1, 1, 1));
 	geo_floor->SetLocalM(translate(mat4(1), vec3(0, -0.1, 0)));
 	geo_floor->SetLocalG(scale(mat4(1), vec3(100, 0.1, 100)));
+	//cube
+	Geo* geo_cube = new Geo();
+	geo_cube->SetColor(vec3(1, 1, 1));
+	geo_cube->SetLocalM(translate(mat4(1), vec3(3, 3, 3)));
+	geo_cube->SetLocalG(scale(mat4(1), vec3(1, 1, 1)));
+	//Sun
+	Geo* geo_sun = new Geo();
+	geo_sun->SetColor(vec3(1, 1, 1));
+	geo_sun->SetLocalM(translate(mat4(1), vec3(0, 5, 0)));
+	geo_sun->SetLocalG(scale(mat4(1), vec3(.5, .5, .5)));
 
 	geo_floor->SetGlobalM();
+	geo_cube->SetGlobalM();
+	geo_sun->SetGlobalM();
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -211,7 +224,9 @@ int main()
 		glDrawArrays(GL_LINES, 0, 6);
 
 		float radius = 30;
-		vec3 lightPos = vec3(sinTime * radius, 3, cosTime * radius);
+		vec3 lightPos = vec3(sinTime * radius, 10, cosTime * radius);
+		geo_sun->SetLocalM(translate(mat4(1), lightPos));
+		geo_sun->SetGlobalM();
 
 		mat4 Amat;
 		//Floor
@@ -224,10 +239,40 @@ int main()
 		glUniform3fv(vertexColorLoc, 1, &(geo_floor->GetColor())[0]);
 		glUniform3fv(lightColorLoc, 1, &vec3(1, 1, 1)[0]);
 		glUniform3fv(lightPositionLoc, 1, &lightPos[0]);
-		glUniform1f(ambientStrengthLoc, 0.1);
-		glUniform1f(specularStrengthLoc, 0.5);
+		glUniform1f(ambientStrengthLoc, 0.7);
+		glUniform1f(specularStrengthLoc, 0.1);
 		glUniform1f(shininessLoc, 32);
-		glUniform1f(diffuseStrengthLoc, 0.5);
+		glUniform1f(diffuseStrengthLoc, 0.2);
+		glDrawArrays(GL_TRIANGLES, 0, obj_cube.polygons * 3);
+		//Sun
+		Amat = P * V * geo_sun->GetModelMatrix();
+		glUseProgram(shader);
+		glBindVertexArray(sphere);
+		glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &(geo_sun->GetModelMatrix())[0][0]);
+		glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &Amat[0][0]);
+		glUniform3fv(camVecLoc, 1, &cam1.pos[0]);
+		glUniform3fv(vertexColorLoc, 1, &(geo_sun->GetColor())[0]);
+		glUniform3fv(lightColorLoc, 1, &vec3(1, 1, 1)[0]);
+		glUniform3fv(lightPositionLoc, 1, &lightPos[0]);
+		glUniform1f(ambientStrengthLoc, 0.7);
+		glUniform1f(specularStrengthLoc, 0.1);
+		glUniform1f(shininessLoc, 32);
+		glUniform1f(diffuseStrengthLoc, 0.2);
+		glDrawArrays(GL_TRIANGLES, 0, obj_sphere.polygons * 3);
+		//Cube
+		Amat = P * V * geo_cube->GetModelMatrix();
+		glUseProgram(shader);
+		glBindVertexArray(cube);
+		glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &(geo_cube->GetModelMatrix())[0][0]);
+		glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &Amat[0][0]);
+		glUniform3fv(camVecLoc, 1, &cam1.pos[0]);
+		glUniform3fv(vertexColorLoc, 1, &(geo_cube->GetColor())[0]);
+		glUniform3fv(lightColorLoc, 1, &vec3(1, 1, 1)[0]);
+		glUniform3fv(lightPositionLoc, 1, &lightPos[0]);
+		glUniform1f(ambientStrengthLoc, 0.7);
+		glUniform1f(specularStrengthLoc, 0.1);
+		glUniform1f(shininessLoc, 32);
+		glUniform1f(diffuseStrengthLoc, 0.2);
 		glDrawArrays(GL_TRIANGLES, 0, obj_cube.polygons * 3);
 
 		//버퍼
@@ -240,7 +285,7 @@ int main()
 
 		//std::cout << "FPS: " << 1 / delta << endl;
 		//cout << "Pos: " << cam1.pos.x << " " << cam1.pos.y << " " << cam1.pos.z << endl;
-		cout << CheckObjectCollision(cam1.pos, cam1.viewVector, geo_floor, 1) << endl;
+		cout << CheckObjectCollision(cam1.pos, cam1.viewVector, vec3(3, 3, 3), 1) << endl;
 	}
 
 	glfwTerminate();
@@ -418,9 +463,9 @@ void DrawObject(GLuint shader, GLuint sphere, OBJ& obj, mat4& M, mat4& MVP, Shad
 }
 */
 
-bool CheckObjectCollision(vec3 rayPos, vec3 rayVec, Geo* objPos, int radius)
+bool CheckObjectCollision(vec3 rayPos, vec3 rayVec, vec3 objPos, int radius)
 {
-	vec3 pos = rayPos - objPos->GetPos();
+	vec3 pos = rayPos - objPos;
 	//int D = (powf(dot(rayVec, objPos->GetPos()), 2) - (dot(rayVec, rayVec) * (dot(pos, pos) - powf(radius, 2))));
 	int D= pow(dot(rayVec, pos), 2) - dot(rayVec, rayVec) * (dot(pos, pos) - radius * radius);
 	if (D < 0)
