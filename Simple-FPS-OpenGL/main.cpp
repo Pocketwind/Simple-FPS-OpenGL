@@ -159,10 +159,16 @@ int main()
 	geo_sun->SetColor(vec3(1, 1, 1));
 	geo_sun->SetLocalM(translate(mat4(1), vec3(0, 5, 0)));
 	geo_sun->SetLocalG(scale(mat4(1), vec3(.5, .5, .5)));
+	//Aim
+	Geo* geo_aim = new Geo();
+	geo_aim->SetColor(vec3(1, 0, 0));
+	geo_aim->SetLocalM(translate(mat4(1), vec3(0, 0, 0)));
+	geo_aim->SetLocalG(scale(mat4(1), vec3(0.05, 0.05, 0.05)));
 
 	geo_floor->SetGlobalM();
 	geo_cube->SetGlobalM();
 	geo_sun->SetGlobalM();
+	geo_aim->SetGlobalM();
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -274,6 +280,24 @@ int main()
 		glUniform1f(shininessLoc, 32);
 		glUniform1f(diffuseStrengthLoc, 0.2);
 		glDrawArrays(GL_TRIANGLES, 0, obj_cube.polygons * 3);
+		//Aim
+		geo_aim->SetLocalM(translate(mat4(1), cam1.armPos));
+		geo_aim->SetGlobalM();
+		Amat = P * V * geo_aim->GetModelMatrix();
+		glUseProgram(shader);
+		glBindVertexArray(sphere);
+		glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &(geo_aim->GetModelMatrix())[0][0]);
+		glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &Amat[0][0]);
+		glUniform3fv(camVecLoc, 1, &cam1.armPos[0]);
+		glUniform3fv(vertexColorLoc, 1, &(geo_aim->GetColor())[0]);
+		glUniform3fv(lightColorLoc, 1, &vec3(1, 1, 1)[0]);
+		glUniform3fv(lightPositionLoc, 1, &lightPos[0]);
+		glUniform1f(ambientStrengthLoc, 0.7);
+		glUniform1f(specularStrengthLoc, 0.1);
+		glUniform1f(shininessLoc, 32);
+		glUniform1f(diffuseStrengthLoc, 0.2);
+		glDrawArrays(GL_TRIANGLES, 0, obj_sphere.polygons * 3);
+
 
 		//¹öÆÛ
 		glCullFace(GL_BACK);
@@ -285,7 +309,8 @@ int main()
 
 		//std::cout << "FPS: " << 1 / delta << endl;
 		//cout << "Pos: " << cam1.pos.x << " " << cam1.pos.y << " " << cam1.pos.z << endl;
-		cout << CheckObjectCollision(cam1.pos, cam1.viewVector, vec3(3, 3, 3), 1) << endl;
+		//cout << CheckObjectCollision(cam1.pos, cam1.viewVector, vec3(3, 3, 3), 1) << endl;
+		cout << "armPos: " << cam1.armPos.x << " " << cam1.armPos.y << " " << cam1.armPos.z << endl;
 	}
 
 	glfwTerminate();
