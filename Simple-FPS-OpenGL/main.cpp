@@ -26,13 +26,13 @@ const float MOVE = 3;
 const float SLIDE = 0.8;
 const float MOUSE_SPEED = 0.001;
 const float SLIDE_THRESHOLD = 0.001;
-const float BLOCK_SCLALE = 1;
-const int BLOCK_X = 256;
-const int BLOCK_Y = 10;
-const int BLOCK_Z = 256;
-const int MAP_X = 256;
-const int MAP_Y = 10;
-const int MAP_Z = 256;
+const float BLOCK_SCLALE = 0.5;
+extern const int BLOCK_X = 256;
+extern const int BLOCK_Y = 10;
+extern const int BLOCK_Z = 256;
+extern const int MAP_X = 256;
+extern const int MAP_Y = 10;
+extern const int MAP_Z = 256;
 
 //GLSL 불러오기
 extern const char* vs, * fs, * vs_base, * fs_base;
@@ -52,14 +52,12 @@ void DrawObject(GLuint shader, GLuint sphere, OBJ& obj_sphere, mat4& M, mat4& MV
 	GLuint diffuseStrengthLoc, GLuint lightColorLoc, GLuint lightPositionLoc);
 void DrawObject(GLuint shader, GLuint sphere, OBJ& obj, mat4& M, mat4& MVP, ShaderLoc& loc);
 bool CheckObjectCollision(vec3 rayPos, vec3 rayVec, vec3 objPos, int radius);
-bool AddBlock(int map[BLOCK_X][BLOCK_Y][BLOCK_Z],vec3 pos);
 
 //전역	변수
 //Cam1 초기화 
 Cam cam1;
-
 //Map
-int map[BLOCK_X][BLOCK_Y][BLOCK_Z];
+Map map;
 
 int main()
 {
@@ -174,7 +172,7 @@ int main()
 	Geo* geo_aim = new Geo();
 	geo_aim->SetColor(vec3(1, 0, 0));
 	geo_aim->SetLocalM(translate(mat4(1), vec3(0, 0, 0)));
-	geo_aim->SetLocalG(scale(mat4(1), vec3(0.05, 0.05, 0.05)));
+	geo_aim->SetLocalG(scale(mat4(1), vec3(0.02, 0.02, 0.02)));
 
 	geo_floor->SetGlobalM();
 	geo_cube->SetGlobalM();
@@ -309,34 +307,27 @@ int main()
 		glUniform1f(diffuseStrengthLoc, 0.2);
 		glDrawArrays(GL_TRIANGLES, 0, obj_sphere.polygons * 3);
 		//Block
-		for (int i = 0; i < BLOCK_X; i++)
+		for (int i = 0;i < map.GetBlockList().size();++i)
 		{
-			for (int j = 0; j < BLOCK_Y; j++)
-			{
-				for (int k = 0; k < BLOCK_Z; k++)
-				{
-					if (map[i][j][k] == 1)
-					{
-						vec3 pos = vec3(i, j, k) * BLOCK_SCLALE;
-						geo_cube->SetLocalM(translate(mat4(1), pos));
-						geo_cube->SetGlobalM();
-						Amat = P * V * geo_cube->GetModelMatrix();
-						glUseProgram(shader);
-						glBindVertexArray(cube);
-						glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &(geo_cube->GetModelMatrix())[0][0]);
-						glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &Amat[0][0]);
-						glUniform3fv(camVecLoc, 1, &cam1.pos[0]);
-						glUniform3fv(vertexColorLoc, 1, &(geo_cube->GetColor())[0]);
-						glUniform3fv(lightColorLoc, 1, &vec3(1, 1, 1)[0]);
-						glUniform3fv(lightPositionLoc, 1, &lightPos[0]);
-						glUniform1f(ambientStrengthLoc, 0.7);
-						glUniform1f(specularStrengthLoc, 0.1);
-						glUniform1f(shininessLoc, 32);
-						glUniform1f(diffuseStrengthLoc, 0.2);
-						glDrawArrays(GL_TRIANGLES, 0, obj_cube.polygons * 3);
-					}
-				}
-			}
+			vec3 pos = vec3(map.GetBlockList()[i].x, map.GetBlockList()[i].y, map.GetBlockList()[i].z);
+			geo_cube->SetLocalG(scale(mat4(1), vec3(BLOCK_SCLALE)));
+			geo_cube->SetColor(vec3(1, 1, 0.4));
+			geo_cube->SetLocalM(translate(mat4(1), pos));
+			geo_cube->SetGlobalM();
+			Amat = P * V * geo_cube->GetModelMatrix();
+			glUseProgram(shader);
+			glBindVertexArray(cube);
+			glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &(geo_cube->GetModelMatrix())[0][0]);
+			glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &Amat[0][0]);
+			glUniform3fv(camVecLoc, 1, &cam1.pos[0]);
+			glUniform3fv(vertexColorLoc, 1, &(geo_cube->GetColor())[0]);
+			glUniform3fv(lightColorLoc, 1, &vec3(1, 1, 1)[0]);
+			glUniform3fv(lightPositionLoc, 1, &lightPos[0]);
+			glUniform1f(ambientStrengthLoc, 0.7);
+			glUniform1f(specularStrengthLoc, 0.1);
+			glUniform1f(shininessLoc, 32);
+			glUniform1f(diffuseStrengthLoc, 0.2);
+			glDrawArrays(GL_TRIANGLES, 0, obj_cube.polygons * 3);
 		}
 
 		//버퍼
@@ -486,12 +477,12 @@ void InputControl(GLFWwindow* window)
 	{
 		cam1.inertia.y += 0.1;
 	}
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
 	{
 		cout << "Add" << endl;
-		AddBlock(map, cam1.armPos);
+		map.AddBlock(vec3(cam1.armPos.x, cam1.armPos.y, cam1.armPos.z), vec3(1, 0, 0));
 	}
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
 	{
 		cout << "Remove" << endl;
 	}
@@ -546,17 +537,4 @@ bool CheckObjectCollision(vec3 rayPos, vec3 rayVec, vec3 objPos, int radius)
 		return false;
 	else
 		return true;
-}
-
-bool AddBlock(int map[BLOCK_X][BLOCK_Y][BLOCK_Z], vec3 pos)
-{
-	int x, y, z;
-	pos = pos / BLOCK_SCLALE;
-	x = (int)pos.x;
-	y = (int)pos.y;
-	z = (int)pos.z;
-	if (x < 0 || x >= BLOCK_X || y < 0 || y >= BLOCK_Y || z < 0 || z >= BLOCK_Z)
-		return false;
-	map[x][y][z] = 1;
-	return true;
 }

@@ -45,3 +45,35 @@ struct ShaderLoc
 	GLuint lightColorLoc;
 	GLuint lightPositionLoc;
 };
+
+class Map
+{
+	vector<ivec3>& pos = *new vector<ivec3>();
+	vector<vec3>& color = *new vector<vec3>();
+	bool isPossible(ivec3 pos)
+	{
+		for (int i = 0;i < this->pos.size();i++)
+		{
+			if (this->pos[i] == pos)
+				return false;
+		}
+		return true;
+	}
+public:
+	void AddBlock(ivec3 pos, vec3 color)
+	{
+		if (isPossible(pos))
+		{
+			this->pos.push_back(pos);
+			this->color.push_back(color);
+		}
+	}
+	vector<ivec3>& GetBlockList()
+	{
+		return pos;
+	}
+	vector<vec3>& GetColorList()
+	{
+		return color;
+	}
+};

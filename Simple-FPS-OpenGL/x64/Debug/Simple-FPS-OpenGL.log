@@ -14,42 +14,41 @@ D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\LoadOBJ.h(36,38): warning C4267
 D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(26,21): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
 D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(27,27): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
 D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(28,31): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(209,45): warning C4244: '인수': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(209,45): warning C4244:         with
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(209,45): warning C4244:         [
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(209,45): warning C4244:             T=float
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(209,45): warning C4244:         ]
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(234,17): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(235,17): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(259,35): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(260,36): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(262,35): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(274,35): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(275,36): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(277,35): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(289,35): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(290,36): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(292,35): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(306,35): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(307,36): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(309,35): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(332,39): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(333,40): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(335,39): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(449,29): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(450,29): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(452,24): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(454,25): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(483,21): warning C4305: '-=': 'double'에서 'T'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(483,21): warning C4305:         with
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(483,21): warning C4305:         [
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(483,21): warning C4305:             T=float
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(483,21): warning C4305:         ]
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(487,21): warning C4305: '+=': 'double'에서 'T'(으)로 잘립니다.
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(487,21): warning C4305:         with
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(487,21): warning C4305:         [
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(487,21): warning C4305:             T=float
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(487,21): warning C4305:         ]
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(544,7): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-LINK : warning LNK4098: 'MSVCRT' defaultlib가 다른 라이브러리와 충돌합니다. /NODEFAULTLIB:library를 사용하십시오.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(207,45): warning C4244: '인수': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(207,45): warning C4244:         with
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(207,45): warning C4244:         [
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(207,45): warning C4244:             T=float
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(207,45): warning C4244:         ]
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(232,17): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(233,17): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(257,35): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(258,36): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(260,35): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(272,35): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(273,36): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(275,35): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(287,35): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(288,36): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(290,35): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(304,35): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(305,36): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(307,35): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(326,36): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(327,37): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(329,36): warning C4305: '인수': 'double'에서 'GLfloat'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(440,29): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(441,29): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(443,24): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(445,25): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(474,21): warning C4305: '-=': 'double'에서 'T'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(474,21): warning C4305:         with
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(474,21): warning C4305:         [
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(474,21): warning C4305:             T=float
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(474,21): warning C4305:         ]
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(478,21): warning C4305: '+=': 'double'에서 'T'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(478,21): warning C4305:         with
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(478,21): warning C4305:         [
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(478,21): warning C4305:             T=float
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(478,21): warning C4305:         ]
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(535,7): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   Simple-FPS-OpenGL.vcxproj -> D:\으아악\Simple-FPS-OpenGL\x64\Debug\Simple-FPS-OpenGL.exe
