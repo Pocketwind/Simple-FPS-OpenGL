@@ -274,21 +274,6 @@ int main()
 		glUniform1f(shininessLoc, 32);
 		glUniform1f(diffuseStrengthLoc, 0.2);
 		glDrawArrays(GL_TRIANGLES, 0, obj_sphere.polygons * 3);
-		//Cube
-		Amat = P * V * geo_cube->GetModelMatrix();
-		glUseProgram(shader);
-		glBindVertexArray(cube);
-		glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &(geo_cube->GetModelMatrix())[0][0]);
-		glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &Amat[0][0]);
-		glUniform3fv(camVecLoc, 1, &cam1.pos[0]);
-		glUniform3fv(vertexColorLoc, 1, &(geo_cube->GetColor())[0]);
-		glUniform3fv(lightColorLoc, 1, &vec3(1, 1, 1)[0]);
-		glUniform3fv(lightPositionLoc, 1, &lightPos[0]);
-		glUniform1f(ambientStrengthLoc, 0.7);
-		glUniform1f(specularStrengthLoc, 0.1);
-		glUniform1f(shininessLoc, 32);
-		glUniform1f(diffuseStrengthLoc, 0.2);
-		glDrawArrays(GL_TRIANGLES, 0, obj_cube.polygons * 3);
 		//Aim
 		geo_aim->SetLocalM(translate(mat4(1), cam1.armPos));
 		geo_aim->SetGlobalM();
@@ -309,9 +294,9 @@ int main()
 		//Block
 		for (int i = 0;i < map.GetBlockList().size();++i)
 		{
-			vec3 pos = vec3(map.GetBlockList()[i].x, map.GetBlockList()[i].y, map.GetBlockList()[i].z);
+			vec3 pos = map.GetBlockList()[i];
+			vec3 color = map.GetColorList()[i];
 			geo_cube->SetLocalG(scale(mat4(1), vec3(BLOCK_SCLALE)));
-			geo_cube->SetColor(vec3(1, 1, 0.4));
 			geo_cube->SetLocalM(translate(mat4(1), pos));
 			geo_cube->SetGlobalM();
 			Amat = P * V * geo_cube->GetModelMatrix();
@@ -320,7 +305,7 @@ int main()
 			glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &(geo_cube->GetModelMatrix())[0][0]);
 			glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &Amat[0][0]);
 			glUniform3fv(camVecLoc, 1, &cam1.pos[0]);
-			glUniform3fv(vertexColorLoc, 1, &(geo_cube->GetColor())[0]);
+			glUniform3fv(vertexColorLoc, 1, &(color)[0]);
 			glUniform3fv(lightColorLoc, 1, &vec3(1, 1, 1)[0]);
 			glUniform3fv(lightPositionLoc, 1, &lightPos[0]);
 			glUniform1f(ambientStrengthLoc, 0.7);
@@ -480,11 +465,12 @@ void InputControl(GLFWwindow* window)
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
 	{
 		cout << "Add" << endl;
-		map.AddBlock(vec3(cam1.armPos.x, cam1.armPos.y, cam1.armPos.z), vec3(1, 0, 0));
+		map.AddBlock(cam1.armPos, vec3(1, 0, 0));
 	}
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
 	{
 		cout << "Remove" << endl;
+		map.RemoveBlock(cam1.armPos);
 	}
 }
 

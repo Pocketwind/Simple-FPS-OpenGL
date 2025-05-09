@@ -68,6 +68,18 @@ public:
 			this->color.push_back(color);
 		}
 	}
+	void RemoveBlock(ivec3 aim)
+	{
+		for (int i = 0;i < pos.size();i++)
+		{
+			if (pos[i] == aim)
+			{
+				pos.erase(pos.begin() + i);
+				color.erase(color.begin() + i);
+				break;
+			}
+		}
+	}
 	vector<ivec3>& GetBlockList()
 	{
 		return pos;
