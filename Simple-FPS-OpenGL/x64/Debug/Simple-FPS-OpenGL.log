@@ -5,7 +5,7 @@ D:\으아악\Simple-FPS-OpenGL\inc\GLFW\glfw3.h(3173,1): warning C4819: 현재 �
 D:\으아악\Simple-FPS-OpenGL\inc\ShaderReader.h(18,20): warning C4267: '=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'main.cpp'을(를) 컴파일하는 중)
   
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\DataStruct.h(23,15): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\DataStruct.h(24,15): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
   (소스 파일 'main.cpp'을(를) 컴파일하는 중)
   
 D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\LoadOBJ.h(36,38): warning C4267: '=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
@@ -47,5 +47,5 @@ D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(463,21): warning C4305
 D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(463,21): warning C4305:         [
 D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(463,21): warning C4305:             T=float
 D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(463,21): warning C4305:         ]
-D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(521,7): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\으아악\Simple-FPS-OpenGL\Simple-FPS-OpenGL\main.cpp(533,7): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   Simple-FPS-OpenGL.vcxproj -> D:\으아악\Simple-FPS-OpenGL\x64\Debug\Simple-FPS-OpenGL.exe

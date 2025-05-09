@@ -283,7 +283,7 @@ int main()
 		glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, &(geo_aim->GetModelMatrix())[0][0]);
 		glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, &Amat[0][0]);
 		glUniform3fv(camVecLoc, 1, &cam1.armPos[0]);
-		glUniform3fv(vertexColorLoc, 1, &(geo_aim->GetColor())[0]);
+		glUniform3fv(vertexColorLoc, 1, &(cam1.color)[0]);
 		glUniform3fv(lightColorLoc, 1, &vec3(1, 1, 1)[0]);
 		glUniform3fv(lightPositionLoc, 1, &lightPos[0]);
 		glUniform1f(ambientStrengthLoc, 0.7);
@@ -462,10 +462,22 @@ void InputControl(GLFWwindow* window)
 	{
 		cam1.inertia.y += 0.1;
 	}
+	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+	{
+		cam1.color = vec3(1, 0, 0);
+	}
+	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+	{
+		cam1.color = vec3(0, 1, 0);
+	}
+	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
+	{
+		cam1.color = vec3(0, 0, 1);
+	}
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
 	{
 		cout << "Add" << endl;
-		map.AddBlock(cam1.armPos, vec3(1, 0, 0));
+		map.AddBlock(cam1.armPos, cam1.color);
 	}
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
 	{

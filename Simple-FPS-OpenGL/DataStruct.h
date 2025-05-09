@@ -8,6 +8,7 @@ using namespace glm;
 //데이터 구조체
 struct Cam
 {
+	vec3 color;
 	bool shoot = false;
 	bool grab = false;
 	bool noclip = false;
@@ -59,6 +60,14 @@ class Map
 		}
 		return true;
 	}
+	bool isInside(vec3 aim, ivec3 blockPos)
+	{
+		int BLOCK_SCLALE = 1;
+		vec3 diff = aim - vec3(blockPos.x, blockPos.y, blockPos.z);
+		if (length(diff) < BLOCK_SCLALE)
+			return true;
+		return false;
+	}
 public:
 	void AddBlock(ivec3 pos, vec3 color)
 	{
@@ -68,11 +77,11 @@ public:
 			this->color.push_back(color);
 		}
 	}
-	void RemoveBlock(ivec3 aim)
+	void RemoveBlock(vec3 aim)
 	{
 		for (int i = 0;i < pos.size();i++)
 		{
-			if (pos[i] == aim)
+			if (isInside(aim,pos[i]))
 			{
 				pos.erase(pos.begin() + i);
 				color.erase(color.begin() + i);
